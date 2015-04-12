@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+	<id>Ticket System</id>
+	<version>1.3</version>
+	<vqmver>2.4.1</vqmver>
+	<author>MaRZoCHi</author>
+	<file name="engine/engine.php">
+		<operation>
+			<ignoreif><![CDATA[include ENGINE_DIR . '/modules/ticket-system-module.php';]]></ignoreif>
+			<search position="before"><![CDATA[case "changemail" :]]></search>
+			<add><![CDATA[
+	// Ticket System
+	case "ticket" :
+		include ENGINE_DIR . '/modules/ticket-system-module.php';
+		break;
+	// Ticket System
+]]></add>
+		</operation>
+		<operation>
+			<ignoreif><![CDATA[elseif ($do == 'ticket') $nam_e = $lang['mws_ticket_sys'];]]></ignoreif>
+			<search position="after"><![CDATA[elseif ($do == 'xfsearch') $nam_e = $xf;]]></search>
+			<add><![CDATA[elseif ($do == 'ticket') $nam_e = $lang['mws_ticket_sys'];
+]]></add>
+		</operation>
+	</file>
+	<file name=".htaccess">
+		<operation>
+			<ignoreif><![CDATA[index.php?do=ticket&doaction=$1]]></ignoreif>
+			<search position="after"><![CDATA[RewriteEngine On]]></search>
+			<add><![CDATA[# Ticket System
+RewriteRule ^tickets/([^/]*).html(/?)+$ index.php?do=ticket&doaction=$1 [L]
+]]></add>
+		</operation>
+	</file>
+</modification>
