@@ -364,8 +364,8 @@ HTML;
 					a.id as aid, a.resp_id as aresp_id, a.resp_date as aresp_date, a.resp_name as aresp_name, a.message as amessage,
 					c.cat_name
 				FROM " . PREFIX . "_ticket_system as t
-				INNER JOIN " . PREFIX . "_ticket_system_cats as c ON t.cat_id = c.cat_id
-				LEFT OUTER JOIN " . PREFIX . "_ticket_system_ans as a ON t.id = a.id
+				LEFT JOIN " . PREFIX . "_ticket_system_cats as c ON ( t.cat_id = c.cat_id )
+				LEFT JOIN " . PREFIX . "_ticket_system_ans as a ON ( t.id = a.ticket_id )
 				WHERE t.send_id = {$member_id['user_id']}
 				ORDER BY t.send_date
 				LIMIT {$limit_0},{$ticket_set['order_limit']}
