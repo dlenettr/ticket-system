@@ -85,7 +85,7 @@ if (isset($_POST['tid'])) {
 			WHERE active = '1' AND id = '".$tid."'");
 		$db->free();
 		$db->query( "
-			INSERT INTO " . USERPREFIX . "_ticket_system_ans (id, resp_id, resp_date, resp_name, message, filelink)
+			INSERT INTO " . USERPREFIX . "_ticket_system_ans (ticket_id, resp_id, resp_date, resp_name, message, filelink)
 			VALUES ('".$tid."', '".$uid."','".$_TIME."','".$name."','".$text."', '')" );
 		$db->free();
 		echo "ok";

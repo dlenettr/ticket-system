@@ -102,11 +102,13 @@ if ( $_REQUEST['action'] == "install" ) {
 	$tableSchema[] = "DROP TABLE IF EXISTS " . PREFIX . "_ticket_system_ans";
 	$tableSchema[] = "CREATE TABLE IF NOT EXISTS " . PREFIX . "_ticket_system_ans (
 	`id` mediumint(8) NOT NULL auto_increment,
+	`ticket_id` mediumint(8) NOT NULL,
 	`resp_id` mediumint(8) NOT NULL,
 	`resp_date` varchar(20) default NULL,
 	`resp_name` varchar(50) NOT NULL,
 	`message` text NOT NULL,
-	`filelink` varchar(60) NOT NULL default ''
+	`filelink` varchar(60) NOT NULL default '',
+	PRIMARY KEY  (`id`)
 	) ENGINE=MyISAM /*!40101 DEFAULT CHARACTER SET " . COLLATE . " COLLATE " . COLLATE . "_general_ci */";
 	$tableSchema[] = "DROP TABLE IF EXISTS " . PREFIX . "_ticket_system_cats";
 	$tableSchema[] = "CREATE TABLE IF NOT EXISTS " . PREFIX . "_ticket_system_cats (

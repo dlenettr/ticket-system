@@ -589,7 +589,7 @@ function show_answers( $tid = False) {
 			t.id as tid, t.send_id, t.cat_id, t.send_date, t.send_name, t.send_ip, t.priority, t.filelink,
 			a.id as aid, a.resp_id, a.resp_date, a.resp_name, a.message
 		FROM " . PREFIX . "_ticket_system_ans as a
-		LEFT JOIN " . PREFIX . "_ticket_system as t ON ( t.id = a.id )
+		LEFT JOIN " . PREFIX . "_ticket_system as t ON ( t.id = a.ticket_id )
 		LEFT JOIN " . PREFIX . "_ticket_system_cats as c ON ( t.cat_id = c.cat_id )
 		{$WHERE}
 		ORDER BY a.resp_date DESC
