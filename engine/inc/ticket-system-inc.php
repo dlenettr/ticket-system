@@ -1,11 +1,11 @@
 <?php
 /*
 =====================================================
- MWS Ticket System v1.3 - by MaRZoCHi
+ MWS Ticket System v1.4 - by MaRZoCHi
 -----------------------------------------------------
  Site: http://dle.net.tr/
 -----------------------------------------------------
- Copyright (c) 2015
+ Copyright (c) 2016
 -----------------------------------------------------
  Lisans: GPL License
 =====================================================
@@ -242,9 +242,9 @@ function navigation_bar( ) {
 HTML;
 }
 
-$js_array[] = "engine/skins/autocomplete.js";
+//$js_array[] = "engine/skins/autocomplete.js";
 
-echoheader( "<i class=\"icon-tag\"></i> Ticket System v1.3", $lng_inc['93'] );
+echoheader( "<i class=\"icon-tag\"></i> Ticket System v1.4", $lng_inc['93'] );
 
 echo <<< HTML
 <style>
@@ -299,7 +299,7 @@ echo <<< HTML
 		}
 		$( '#name' ).autocomplete({
 			source: function( request, response ) {
-				$.getJSON( dle_root + 'engine/ajax/find_user.php', {
+				$.getJSON( dle_root + 'engine/ajax/ticket-system-ajax.php', {
 					term: extractLast( request.term )
 				}, response );
 			},

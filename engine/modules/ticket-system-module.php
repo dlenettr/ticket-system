@@ -1,11 +1,11 @@
 <?php
 /*
 =====================================================
- MWS Ticket System v1.3 - by MaRZoCHi
+ MWS Ticket System v1.4 - by MaRZoCHi
 -----------------------------------------------------
  Site: http://dle.net.tr/
 -----------------------------------------------------
- Copyright (c) 2015
+ Copyright (c) 2016
 -----------------------------------------------------
  Lisans: GPL License
 =====================================================
@@ -99,14 +99,28 @@ if ( $doaction == "new" ) {
 			}
 
 			if ($allow_recaptcha) {
-				if ($_POST['recaptcha_response_field'] AND $_POST['recaptcha_challenge_field']) {
-					require_once ENGINE_DIR . '/classes/recaptcha.php';
-					$resp = recaptcha_check_answer ($config['recaptcha_private_key'],$_SERVER['REMOTE_ADDR'],$_POST['recaptcha_challenge_field'],$_POST['recaptcha_response_field']);
-					if ($resp->is_valid) {
-						$_POST['sec_code'] = 1;
-						$_SESSION['sec_code_session'] = 1;
+
+				if ( $config['version_id'] <= "10.5" ) {
+					if ($_POST['recaptcha_response_field'] AND $_POST['recaptcha_challenge_field']) {
+						require_once ENGINE_DIR . '/classes/recaptcha.php';
+						$resp = recaptcha_check_answer ($config['recaptcha_private_key'],$_SERVER['REMOTE_ADDR'],$_POST['recaptcha_challenge_field'],$_POST['recaptcha_response_field']);
+						if ($resp->is_valid) {
+							$_POST['sec_code'] = 1;
+							$_SESSION['sec_code_session'] = 1;
+						} else $_SESSION['sec_code_session'] = false;
 					} else $_SESSION['sec_code_session'] = false;
-				} else $_SESSION['sec_code_session'] = false;
+				} else  {
+					// 10.5 Recaptcha 2.0
+					if ( $_POST['g-recaptcha-response'] ) {
+						require_once ENGINE_DIR . '/classes/recaptcha.php';
+						$reCaptcha = new ReCaptcha($config['recaptcha_private_key']);
+						$resp = $reCaptcha->verifyResponse(get_ip(), $_POST['g-recaptcha-response'] );
+						if ( $resp != null && $resp->success ) {
+							$_POST['sec_code'] = 1;
+							$_SESSION['sec_code_session'] = 1;
+						 } else $_SESSION['sec_code_session'] = false;
+					} else $_SESSION['sec_code_session'] = false;
+				}
 			}
 
 			if ($allow_captcha) {
@@ -228,16 +242,21 @@ if ( $doaction == "new" ) {
 				if ( $allow_recaptcha ) {
 					$tpl->set( '[recaptcha]', "" );
 					$tpl->set( '[/recaptcha]', "" );
-					$tpl->set( '{recaptcha}', '
-					<script language="javascript" type="text/javascript">
-					<!--
-						var RecaptchaOptions = {
-							theme: \''.$config['recaptcha_theme'].'\',
-							lang: \''.$lang['wysiwyg_language'].'\'
-						};
-					//-->
-					</script>
-					<script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k='.$config['recaptcha_public_key'].'"></script>' );
+					if ( $config['version_id'] <= "10.5" ) {
+						$tpl->set( '{recaptcha}', '
+						<script language="javascript" type="text/javascript">
+						<!--
+							var RecaptchaOptions = {
+								theme: \''.$config['recaptcha_theme'].'\',
+								lang: \''.$lang['wysiwyg_language'].'\'
+							};
+						//-->
+						</script>
+						<script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k='.$config['recaptcha_public_key'].'"></script>' );
+					} else {
+						// 10.5 Recaptcha 2.0
+						$tpl->set( '{recaptcha}', "<div class=\"g-recaptcha\" data-sitekey=\"{$config['recaptcha_public_key']}\" data-theme=\"{$config['recaptcha_theme']}\"></div><script src='https://www.google.com/recaptcha/api.js?hl={$lang['wysiwyg_language']}' async defer></script>" );
+					}
 					$tpl->set_block( "'\\[sec_code\\](.*?)\\[/sec_code\\]'si", "" );
 					$tpl->set( '{code}', "" );
 				} else {
@@ -379,15 +398,21 @@ HTML;
 				$tpl->set( '{user.comm-num}', $member_id['comm_num'] );
 				if ( empty($member_id['foto']) ) {
 					$tpl->set( '{user.foto}', $config['http_home_url'] . "templates/" . $config['skin'] . "/dleimages/noavatar.png" );
-				} else {
-					$tpl->set( '{user.foto}', "/uploads/fotos/" . $member_id['foto'] );
+				} else if( $config['version_id'] >= '10.5' AND $member_id['foto'] ) {
+					if ( strpos( $member_id['foto'], "://" ) !== false ) {
+						$tpl->set( '{user.foto}', $member_id['foto'] );
+					} else {
+						$tpl->set( '{user.foto}', "/uploads/foto/" . $member_id['foto'] );
+					}
+				} else if ( $config['version_id'] < '10.5' AND $member_id['foto'] ) {
+					$tpl->set( '{user.foto}', "/uploads/foto/" . $member_id['foto'] );
 				}
 				// user
 				// sender
-				$tpl->set( '{sender.id}', $member_id['user_id'] );
-				$tpl->set( '{sender.name}', urlencode( $member_id['name'] ) );
+				$tpl->set( '{sender.id}', $row['send_id'] );
+				$tpl->set( '{sender.name}', urlencode( $row['send_name'] ) );
 				$tpl->set( '{sender.ip}', $row['send_ip'] );
-				$tpl->set( '{sender.link}', "onclick=\"ShowProfile('" . htmlspecialchars( urlencode( $member_id['name'] ), ENT_QUOTES, $config['charset'] ) . "', '" . $links['user'] . "" . urlencode( $member_id['name'] ) . "/', '1'); return false;\" href=\"" . $links['user'] . "" . urlencode( $member_id['name'] ) . "/\"" );
+				$tpl->set( '{sender.link}', "onclick=\"ShowProfile('" . htmlspecialchars( urlencode( $row['send_name'] ), ENT_QUOTES, $config['charset'] ) . "', '" . $links['user'] . "" . urlencode( $row['send_name'] ) . "/', '1'); return false;\" href=\"" . $links['user'] . "" . urlencode( $row['send_name'] ) . "/\"" );
 				// sender
 				// ticket
 				$tpl->set( '{ticket.id}', $row['tid'] );

@@ -1,9 +1,9 @@
 Ticket System
 --------------
 * Yapımcı: Mehmet Hanoğlu ( dle.net.tr )
-* Tarih : 12.04.2015
+* Tarih : 26.06.2016
 * Lisans : GPL
-* DLE : 10.4
+* DLE : 10.4, 10.5, 10.6, 11.0
 
 Ticket sistemi ile müşterilerinize, özel gruplarınıza ayrıcalık tanıyarak daha hızlı destek almalarını sağlayabilirsiniz.
 Bu sistem ile kullanıcılar, mesajlarını ve dosyalarını, durumun aciliyetini belirterek size iletebilirler.

@@ -1,11 +1,11 @@
 <?php
 /*
 =====================================================
- MWS Ticket System v1.3 - by MaRZoCHi
+ MWS Ticket System v1.4 - by MaRZoCHi
 -----------------------------------------------------
  Site: http://dle.net.tr/
 -----------------------------------------------------
- Copyright (c) 2015
+ Copyright (c) 2016
 -----------------------------------------------------
  Lisans: GPL License
 =====================================================
@@ -149,6 +149,18 @@ else if (isset($_POST['aid'])) {
 		echo "ok";
 	}
 
+}
+
+else if (isset($_GET['term'])) {
+
+	$term = convert_unicode( $_GET['term'], $config['charset'] );
+	if( preg_match( "/[\||\<|\>|\"|\!|\?|\$|\@|\/|\\\|\&\~\*\+]/", $term ) ) $term = "";
+	else $term = $db->safesql( htmlspecialchars( strip_tags( stripslashes( trim( $term ) ) ), ENT_QUOTES, $config['charset'] ) );
+	if( $term == "" ) die("[]");
+	$users = array ();
+	$db->query("SELECT name FROM " . PREFIX . "_users WHERE `name` like '{$term}%' LIMIT 10");
+	while( $row = $db->get_row() ) { $users[] = $row['name']; }
+	echo json_encode( $users );
 }
 
 else {
