@@ -12,4 +12,6 @@ Admin panelde birçok ayarlamayı kolayca yapabilirsiniz.
 Captcha ya da Recaptcha güvenlik doğrulama sistemi, Template(.tpl) kullanımı sayesinde kolayca özelleştirebilme.
 Admin Panelinde AJAX ile hızlı işlevsel kullanım.
 
+Russian Translation: https://github.com/Gameerr ( Thanks.. )
+
 Modül Sayfası: http://dle.net.tr/dle-modul/925-ticket-system.html
