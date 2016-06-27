@@ -58,6 +58,8 @@ if( $config["lang_" . $config['skin']] ) {
 	include_once ROOT_DIR . '/language/' . $config['langs'] . '/website.lng';
 }
 
+include_once ROOT_DIR . '/language/' . $config['langs'] . '/ticket-system-lang.lng';
+
 $config['charset'] = ($lang['charset'] != '') ? $lang['charset'] : $config['charset'];
 
 require_once ENGINE_DIR	. '/api/api.class.php';
@@ -78,7 +80,7 @@ if (isset($_POST['tid'])) {
 		$text = $db->safesql( $parse->BB_Parse( $parse->process( $_POST['text'] ), false ) );
 		$name = $db->safesql($_POST['name']);
 		if( !$tid OR !$text OR !$uid) die( "error" );
-		$dle_api->send_pm_to_user($suid, $lang['mws_ticket_notify'] . " " . $lang['mws_ticket_rtag'], $text, $name);
+		$dle_api->send_pm_to_user($suid, $lng_mod['ticket_notify'] . " " . $lng_mod['ticket_rtag'], $text, $name);
 		$db->query( "
 			UPDATE " . USERPREFIX . "_ticket_system
 			SET active = '0',resp_id = '".$uid."',resp_name = '".$name."', resp_date = '".$_TIME."'
